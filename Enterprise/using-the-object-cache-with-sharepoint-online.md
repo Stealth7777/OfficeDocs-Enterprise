@@ -3,7 +3,7 @@ title: "Using the object cache with SharePoint Online"
 ms.author: krowley
 author: kccross
 manager: laurawi
-ms.date: 4/20/2015
+ms.date: 09/19/2018
 ms.audience: Admin
 ms.topic: troubleshooting
 ms.service: o365-administration
@@ -12,24 +12,24 @@ ms.collection: Ent_O365
 ms.custom: Adm_O365
 search.appverid: SPO160
 ms.assetid: 38bc9c14-3826-449c-beb6-b1003bcbeaaf
-description: "This article explains the difference between using the object cache in SharePoint Server 2013 on-premises and SharePoint Online."
+description: "This article explains how object cache works in SharePoint Server 2013/2016 on-premises and why you can't use it in SharePoint Online."
 ---
 
-# Using the object cache with SharePoint Online
+# Why you can't use the object cache with SharePoint Online
 
-This article explains the difference between using the object cache in SharePoint Server 2013 on-premises and SharePoint Online.
+This article explains how object cache works in SharePoint Server 2013/2016 on-premises and why you can't use it in SharePoint Online.
   
-There is significant negative impact of relying on the object cache in SharePoint Online deployment. Any dependency on object cache in SharePoint Online will reduce the reliability of your page. 
+Given the fact that some very popular classic publishing features like Structural Navigation and the Content Query Web Part were originally designed to explicitly use object cache, it is important to review the requirements to have such features enabled as they have a negative impact on performance in SharePoint Online as a result.
   
-## How the SharePoint Online and SharePoint Server 2013 object cache works
+## How SharePoint 2013/2016 object cache works
 
-When SharePoint Server 2013 is hosted on-premises, the customer has private front-end web servers that host the object cache. This means the cache is dedicated to one customer and is only limited by how much memory is available and allocated to the object cache. Because only one customer is served in the on-premises scenario the front-end web servers typically have users making requests to the same sites over and over. This means that the cache gets full quickly and remains full of the list query results and SharePoint objects that your users are requesting on a regular basis.
+When SharePoint Server 2013/2016 is hosted on-premises, the server farm has front-end web servers that host the object cache. This means the cache is dedicated for that farm and is only limited by how much memory is available and allocated to the object cache. Because only one customer is served in the on-premises scenario the front-end web servers typically have users making requests to the same servers over and over again. This means that the cache gets full quickly and remains full of the list query results and SharePoint objects that your users are requesting on a regular basis.
   
 ![Shows traffic and load to on-premises front-end web servers](media/a0d38b36-4909-4abb-8d4e-4930814bb3de.png)
   
-As a result, the second time a user visits a page, the page load time improves. After a minimum of four loads of the same page, the page is cached on all of the front-end web servers.
+As a result, the second time a user visits a page, the page load time improves as they would normally be accessing the page via the same server they did the last time or other users have accessed the same web / pages and have therefore populated the object cache on the servers.
   
-In contrast, in SharePoint Online there are many more servers but also many more sites. Each user may connect to a different front-end web server that doesn't have the cache populated. Or, perhaps the cache does get populated for a server, but the the next user to that front-end web server requests a page from a different site. Or, even if the next user requests the same page as on their previous visit, they are load-balanced to a different front-end web server that doesn't have that page in its cache. In this last case, caching doesn't help the users at all.
+In contrast, in SharePoint Online there are many more front-end web servers and if object cache were enabled it would negatively affect performance. and as there are so many front-end web servers, each user will connect to a different front-end web server each time they connect. Object cache would negatively affect the performance as it would need to be populated each timecache does get populated for a server, but the the next user to that front-end web server requests a page from a different site. Or, even if the next user requests the same page as on their previous visit, they are load-balanced to a different front-end web server that doesn't have that page in its cache. In this last case, caching doesn't help the users at all.
   
 In the following figure, each dot represents a page that a user is requesting and where it cached. Different colors represent different customers making shared use of the SaaS infrastructure.
   
@@ -41,14 +41,21 @@ For all of these reasons, relying on users getting cached objects is not an effe
   
 ## If we can't rely on the object cache to improve performance in SharePoint Online, what do we use instead?
 
-Since you shouldn't rely on caching in SharePoint Online, you should evaluate alternative design approaches for SharePoint customizations that use the object cache. This means using approaches for performance issues which do not rely on the object caching in order to produce good results for users. This is described in some of the other articles in this series and include:
+Since you shouldn't rely on object cache in SharePoint Online, you should evaluate alternative design approaches for SharePoint customizations that do not use the object cache. This means using approaches for performance issues which do not rely on the object caching in order to produce good results for users, which means reviewing your requirements to use features that rely on object cache as for example the Publishing Infrastructure and the Content Query Web Part. This is described in some of the other articles in this series and include:
   
 - [Navigation options for SharePoint Online](navigation-options-for-sharepoint-online.md)
     
 - [Minification and bundling in SharePoint Online](minification-and-bundling-in-sharepoint-online.md)
     
-- [Using content delivery networks](using-content-delivery-networks-with-sharepoint-online.md)
+- [Use the Office 365 content delivery network with SharePoint Online](use-office-365-cdn-with-spo.md)
     
 - [Delay loading images and JavaScript in SharePoint Online](delay-loading-images-and-javascript-in-sharepoint-online.md)
+
+- [Page Diagnostics for SPO to help you identify issues on Publishing pages](page-diagnostics-for-spo.md) 
+
+- [Best practices on buidling SharePoint Online portals, including performance and navigation](https://docs.microsoft.com/sharepoint/dev/solution-guidance/portal-overview)
+
+- [Modern pages customization as a way to avoid object cache/Publishing feature](https://docs.microsoft.com/sharepoint/dev/solution-guidance/modern-experience-customizations-customize-pages)
+
     
 
