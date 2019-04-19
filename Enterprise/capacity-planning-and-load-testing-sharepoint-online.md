@@ -1,7 +1,7 @@
 ---
 title: "Capacity planning and load testing SharePoint Online"
-ms.author: krowley
-author: kccross
+ms.author: kvice
+author: kelleyvice-msft
 manager: laurawi
 ms.date: 4/18/2016
 ms.audience: Admin
